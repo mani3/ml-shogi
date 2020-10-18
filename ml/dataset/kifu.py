@@ -28,7 +28,7 @@ def read_kifu(filepath):
   kifu = shogi.CSA.Parser.parse_file(filepath)[0]
   win_color = shogi.BLACK if kifu['win'] == 'b' else shogi.WHITE
   board = shogi.Board()
-  
+
   move_labels = []
   wins = []
   feature_np = None
