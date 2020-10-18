@@ -18,7 +18,7 @@ def make_input_features(piece_bb, occupied, pieces_in_hand):
     # pieces on board
     for piece_type in shogi.PIECE_TYPES_WITH_NONE[1:]:
       bb = piece_bb[piece_type] & occupied[color]
-      feature = np.zeros(9 * 9, dtype=np.float32)
+      feature = np.zeros(9 * 9, dtype=np.uint8)
       for pos in shogi.SQUARES:
         if bb & shogi.BB_SQUARES[pos] > 0:
           feature[pos] = 1
@@ -28,9 +28,9 @@ def make_input_features(piece_bb, occupied, pieces_in_hand):
     for piece_type in range(1, 8):
       for n in range(shogi.MAX_PIECES_IN_HAND[piece_type]):
         if piece_type in pieces_in_hand[color] and n < pieces_in_hand[color][piece_type]:  # noqa: E501
-          feature = np.ones(9 * 9, dtype=np.float32)
+          feature = np.ones(9 * 9, dtype=np.uint8)
         else:
-          feature = np.zeros(9 * 9, dtype=np.float32)
+          feature = np.zeros(9 * 9, dtype=np.uint8)
         features.append(feature.reshape((9, 9)))
   return np.array(features).transpose([1, 2, 0])
 

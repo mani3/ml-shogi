@@ -56,6 +56,7 @@ class CSA(object):
     logger.info(f'position_valid: {len(self.positions_valid[0])}')
 
   def preprocess(self, x, y1, y2):
+    x = tf.cast(x, dtype=tf.float32)
     return x, y1, y2
 
   def train_input_fn(self):
