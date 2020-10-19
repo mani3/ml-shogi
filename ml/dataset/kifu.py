@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+from tqdm import tqdm
 
 import shogi
 import shogi.CSA
@@ -14,7 +15,7 @@ def read(kifu_list_file):
   win_all = []
 
   with open(kifu_list_file, 'r') as f:
-    for line in f.readlines():
+    for line in tqdm(f.readlines()):
       filepath = line.rstrip('\n')
       inputs, moves, wins = read_kifu(filepath)
 
