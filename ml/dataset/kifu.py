@@ -10,19 +10,22 @@ import ml.dataset.features as features
 
 
 def read(kifu_list_file):
-  feature_all = None
-  move_all = None
-  win_all = None
+  feature_all = []
+  move_all = []
+  win_all = []
 
   with open(kifu_list_file, 'r') as f:
     for line in tqdm(f.readlines()):
       filepath = line.rstrip('\n')
       inputs, moves, wins = read_kifu(filepath)
 
-      feature_all = inputs if feature_all is None else np.append(feature_all, inputs, axis=0)
-      move_all = moves if move_all is None else np.append(move_all, moves, axis=0)
-      win_all = wins if win_all is None else np.append(win_all, wins, axis=0)
+      feature_all.append(inputs)
+      move_all.extend(moves)
+      win_all.extend(wins)
 
+  feature_all = np.concatenate(feature_all, axis=0)
+  move_all = np.asarray(move_all)
+  win_all = np.asarray(win_all)
   return (feature_all, win_all, win_all)
 
 
