@@ -40,6 +40,7 @@ def serialize_example(feature, move_label, win, move_number, steps):
 
 
 def main(args):
+  os.makedirs(args.input_dir, exist_ok=True)
   input_pattern = os.path.join(args.input_dir, '*.pickle')
   input_paths = glob.glob(input_pattern)
 

@@ -110,6 +110,7 @@ def run(logdir, model_name, opt_name, loss_name):
   dataset = CSA(
     FLAGS.train_dir, FLAGS.valid_dir, FLAGS.epochs, FLAGS.batch_size)
 
+  # 3143460
   logging_steps = len(dataset.train_list) // FLAGS.batch_size
   default_steps = FLAGS.logging_steps
   logging_steps = default_steps if default_steps else logging_steps

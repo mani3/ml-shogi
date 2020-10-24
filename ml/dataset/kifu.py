@@ -107,7 +107,8 @@ class Phase(object):
     ]
 
   def save(self, export_dir):
-    hash = hashlib.sha256(self.feature).hexdigest()
+    key = np.array_str(self.feature) + str(self.label) + str(self.win)
+    hash = hashlib.sha256(key.encode('utf8')).hexdigest()
     output_path = os.path.join(export_dir, f'{hash}.pickle')
 
     os.makedirs(export_dir, exist_ok=True)
