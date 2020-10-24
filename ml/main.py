@@ -14,14 +14,14 @@ from ml.model import (
 )
 
 from ml.trainer import Trainer
-from ml.dataset.csa import CSA
+from ml.dataset.csa_tfrecord import CSATFRecord
 
 
 logger = absl.logging
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('train_dir', './dataset/pickles/train', 'Train dir')
-flags.DEFINE_string('valid_dir', './dataset/pickles/valid', 'Valid dir')
+flags.DEFINE_string('train_tfrecord', './dataset/tfrecords/train.tfrecord', 'Train tfrecord')
+flags.DEFINE_string('valid_tfrecord', './dataset/tfrecords/valid.tfrecord', 'Valid tfrecord')
 flags.DEFINE_string('logdir', None, 'Log directory')
 
 flags.DEFINE_string('model_name', 'cnn_simple192', 'cnn')
@@ -107,13 +107,14 @@ def run(logdir, model_name, opt_name, loss_name):
   with trainer.summary_writer.as_default():
     tf.summary.text('parameters', FLAGS.flags_into_string(), step=0)
 
-  dataset = CSA(
-    FLAGS.train_dir, FLAGS.valid_dir, FLAGS.epochs, FLAGS.batch_size)
+  dataset = CSATFRecord(
+    FLAGS.train_tfrecord, FLAGS.valid_tfrecord, FLAGS.epochs, FLAGS.batch_size)
 
   # 3143460
-  logging_steps = len(dataset.train_list) // FLAGS.batch_size
-  default_steps = FLAGS.logging_steps
-  logging_steps = default_steps if default_steps else logging_steps
+  if FLAGS.logging_steps:
+    logging_steps = FLAGS.logging_steps
+  else:
+    logging_steps = dataset.train_size // FLAGS.batch_size
   logger.info(f'logging_steps: {logging_steps}')
 
   trainer.train(dataset, logging_steps, FLAGS.learning_rate)
