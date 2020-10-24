@@ -1,4 +1,5 @@
 import argparse
+from tqdm import tqdm
 
 from ml.dataset import kifu
 
@@ -8,7 +9,7 @@ def main(args):
   export_dir = args.export_dir
 
   with open(kifu_list_path, 'r') as f:
-    for line in f.readlines():
+    for line in tqdm(f.readlines()):
       filepath = line.rstrip('\n')
       kifu.export_data(filepath, export_dir)
 

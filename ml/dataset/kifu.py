@@ -112,7 +112,8 @@ class Phase(object):
 
     os.makedirs(export_dir, exist_ok=True)
     if os.path.exists(output_path):
-      print(f'Already exist: {output_path}, {self.move_number}, {self.steps}')
+      # print(f'Already exist: {output_path}, {self.move_number}, {self.steps}')
+      pass
     else:
       with open(output_path, 'wb') as f:
         pickle.dump(self.data(), f, pickle.HIGHEST_PROTOCOL)
@@ -136,4 +137,4 @@ def export_data(filepath, export_dir):
     phase = Phase(feature, move_label, win, count, move_number)
     phase.save(export_dir)
     board.push_usi(move)
-  print(f'Completion: steps={count}, sfen={sfen}')
+  # print(f'Completion: steps={count}, sfen={sfen}')
