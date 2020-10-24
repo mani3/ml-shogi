@@ -1,5 +1,5 @@
 import os
-import time
+import glob
 import pickle
 
 from absl import logging as logger
@@ -12,75 +12,52 @@ import ml.dataset.kifu as kifu
 class CSA(object):
 
   def __init__(
-    self, kifu_list_train_path, kifu_list_valid_path,
+    self, train_dir, valid_dir,
     epochs, batch_size=64, seed=42):
 
     self.batch_size = batch_size
     self.seed = seed
     self.epochs = epochs
-    train_path, _ = os.path.splitext(kifu_list_train_path)
-    train_pickle_path = train_path + '.pickle'
 
-    valid_path, _ = os.path.splitext(kifu_list_valid_path)
-    valid_pickle_path = valid_path + '.pickle'
+    self.train_dir = train_dir
+    self.valid_dir = valid_dir
 
-    # Train data
-    start_time = time.time()
-    logger.info(f'Start to load train kifu list: {kifu_list_train_path}')
+    self.train_list = glob.glob(os.path.join(train_dir, '*.pickle'))
+    self.valid_list = glob.glob(os.path.join(valid_dir, '*.pickle'))
 
-    if os.path.exists(train_pickle_path):
-      with open(train_pickle_path, 'rb') as f:
-        self.positions_train = pickle.load(f)
-    else:  
-      self.positions_train = kifu.read(kifu_list_train_path)
-      with open(train_pickle_path, 'wb') as f:
-        pickle.dump(self.positions_train, f, pickle.HIGHEST_PROTOCOL)
+  def preprocess(self, filepath):
+    x, y, win = tf.py_function(
+      self.read_file, [filepath], [tf.float32, tf.int64, tf.int64])
+    return x, y, win
 
-    logger.info(f'End to load train kifu list: {time.time() - start_time} s')
-
-    # Valid data
-    start_time = time.time()
-    logger.info(f'Start to load valid kifu list: {kifu_list_valid_path}')      
-
-    if os.path.exists(valid_pickle_path):
-      with open(valid_pickle_path, 'rb') as f:
-        self.positions_valid = pickle.load(f)
-    else:
-      self.positions_valid = kifu.read(kifu_list_valid_path)
-      with open(valid_pickle_path, 'wb') as f:
-        pickle.dump(self.positions_valid, f, pickle.HIGHEST_PROTOCOL)
-
-    logger.info(f'End to load valid kifu list: {time.time() - start_time} s')
-
-    logger.info(f'position_train: {len(self.positions_train[0])}')
-    logger.info(f'position_valid: {len(self.positions_valid[0])}')
-
-  def preprocess(self, x, y1, y2):
-    x = tf.cast(x, dtype=tf.float32)
-    return x, y1, y2
+  def read_file(self, filepath):
+    filepath = filepath.numpy().decode("utf-8")
+    with open(filepath, 'rb') as f:
+      [x, y, win, move_number, steps] = pickle.load(f)
+    return [x, y, win]
 
   def train_input_fn(self):
     batch_size = self.batch_size
-    feature_np, move_np, win_np = self.positions_train
+    file_pattern = os.path.join(self.train_dir, '*.pickle')
 
-    num_call = tf.data.experimental.AUTOTUNE
-    dataset = tf.data.Dataset.from_tensor_slices((feature_np, move_np, win_np))
+    num_parallel = tf.data.experimental.AUTOTUNE
+    dataset = tf.data.Dataset.list_files(file_pattern, seed=self.seed)
     dataset = (dataset.shuffle(10000, seed=self.seed)
+               .map(self.preprocess, num_parallel_calls=num_parallel)
                .repeat(self.epochs)
-               .map(self.preprocess, num_parallel_calls=num_call)
                .batch(batch_size)
                .prefetch(tf.data.experimental.AUTOTUNE))
     return dataset
 
   def valid_input_fn(self):
     batch_size = self.batch_size
-    feature_np, move_np, win_np = self.positions_valid
+    file_pattern = os.path.join(self.valid_dir, '*.pickle')
 
     num_parallel = tf.data.experimental.AUTOTUNE
-    dataset = tf.data.Dataset.from_tensor_slices((feature_np, move_np, win_np))
+    dataset = tf.data.Dataset.list_files(file_pattern)
     dataset = (dataset.repeat(1)
-               .batch(batch_size)
                .map(self.preprocess, num_parallel_calls=num_parallel)
+               .batch(batch_size)
                .cache()
                .prefetch(tf.data.experimental.AUTOTUNE))
     return dataset

@@ -20,8 +20,8 @@ from ml.dataset.csa import CSA
 logger = absl.logging
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('train_list', './kifulist_train_100.txt', 'Train list')
-flags.DEFINE_string('valid_list', './kifulist_valid_100.txt', 'Valid list')
+flags.DEFINE_string('train_dir', './dataset/pickles/train', 'Train dir')
+flags.DEFINE_string('valid_dir', './dataset/pickles/valid', 'Valid dir')
 flags.DEFINE_string('logdir', None, 'Log directory')
 
 flags.DEFINE_string('model_name', 'cnn_simple192', 'cnn')
@@ -108,9 +108,9 @@ def run(logdir, model_name, opt_name, loss_name):
     tf.summary.text('parameters', FLAGS.flags_into_string(), step=0)
 
   dataset = CSA(
-    FLAGS.train_list, FLAGS.valid_list, FLAGS.epochs, FLAGS.batch_size)
+    FLAGS.train_dir, FLAGS.valid_dir, FLAGS.epochs, FLAGS.batch_size)
 
-  logging_steps = len(dataset.positions_train[0]) // FLAGS.batch_size
+  logging_steps = len(dataset.train_list) // FLAGS.batch_size
   default_steps = FLAGS.logging_steps
   logging_steps = default_steps if default_steps else logging_steps
   logger.info(f'logging_steps: {logging_steps}')

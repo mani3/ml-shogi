@@ -1,4 +1,8 @@
+import os
 import copy
+import pickle
+import hashlib
+
 import numpy as np
 from tqdm import tqdm
 
@@ -77,3 +81,59 @@ def read_kifu(filepath):
 
     board.push_usi(move)
   return (feature_np, move_labels, wins)
+
+
+class Phase(object):
+
+  def __init__(self, feature, label, win, steps, move_number):
+    self.feature = self.convert_np(feature)
+    self.label = label
+    self.win = win
+    self.steps = steps
+    self.move_number = move_number
+
+  def convert_np(self, x):
+    if not x.flags['C_CONTIGUOUS']:
+      x = np.ascontiguousarray(x)
+    return x
+
+  def data(self):
+    return [
+      self.feature,
+      self.label,
+      self.win,
+      self.move_number,
+      self.steps,
+    ]
+
+  def save(self, export_dir):
+    hash = hashlib.sha256(self.feature).hexdigest()
+    output_path = os.path.join(export_dir, f'{hash}.pickle')
+
+    os.makedirs(export_dir, exist_ok=True)
+    if os.path.exists(output_path):
+      print(f'Already exist: {output_path}, {self.move_number}, {self.steps}')
+    else:
+      with open(output_path, 'wb') as f:
+        pickle.dump(self.data(), f, pickle.HIGHEST_PROTOCOL)
+
+
+def export_data(filepath, export_dir):
+  board = shogi.Board()
+
+  kifu = shogi.CSA.Parser.parse_file(filepath)[0]
+  win_color = shogi.BLACK if kifu['win'] == 'b' else shogi.WHITE
+
+  count = len(kifu['moves'])
+  sfen = kifu['sfen']
+
+  for move in kifu['moves']:
+    win = 1 if win_color == board.turn else 0
+    move_number = board.move_number
+    feature = features.make_input_features_from_board(board)
+    move_label = features.make_output_label(shogi.Move.from_usi(move), board.turn)  # noqa: E501
+
+    phase = Phase(feature, move_label, win, count, move_number)
+    phase.save(export_dir)
+    board.push_usi(move)
+  print(f'Completion: steps={count}, sfen={sfen}')
