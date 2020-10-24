@@ -45,6 +45,7 @@ class CSA(object):
     dataset = (dataset.shuffle(10000, seed=self.seed)
                .map(self.preprocess, num_parallel_calls=num_parallel)
                .repeat(self.epochs)
+               .cache()
                .batch(batch_size)
                .prefetch(tf.data.experimental.AUTOTUNE))
     return dataset
