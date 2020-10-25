@@ -7,14 +7,17 @@ from absl import flags
 
 import numpy as np
 import tensorflow as tf
+import tensorflow_addons as tfa
 
 from ml.loss import simple_loss
 from ml.model import (
   cnn,
+  resnet,
 )
 
 from ml.trainer import Trainer
 from ml.dataset.csa_tfrecord import CSATFRecord
+from ml.dataset.common import MOVE_DIRECTION_LABEL_NUM
 
 
 logger = absl.logging
@@ -81,6 +84,14 @@ def get_optimizer(name):
 def get_model(name):
   if name == 'cnn_simple192':
     return cnn.simple192
+  elif name == 'resnet_18':
+    return resnet.ResNet18
+  elif name == 'resnet_34':
+    return resnet.ResNet34
+  elif name == 'resnet_50':
+    return resnet.ResNet50
+  elif name == 'resnet_101':
+    return resnet.ResNet101
   else:
     raise ValueError('{} is not support model_name'.format(name))
 
@@ -93,7 +104,8 @@ def run(logdir, model_name, opt_name, loss_name):
   logger.info(f'model_name: {model_name}')
   logger.info(f'opt_name: {opt_name}')
 
-  model = get_model(model_name)()
+  model = get_model(model_name)(
+    input_shape=(9, 9, 104), classes=MOVE_DIRECTION_LABEL_NUM)
   logger.info(model.summary())
 
   if FLAGS.saved_model_path:

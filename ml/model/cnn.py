@@ -14,10 +14,10 @@ from ml.dataset.common import MOVE_DIRECTION_LABEL_NUM
 
 
 def simple(
+  input_shape=(9, 9, 104),
   classes=MOVE_DIRECTION_LABEL_NUM,
   filters=192,
-  input_shape=(9, 9, 104), 
-  kernel_size=3, 
+  kernel_size=3,
   bn_axis=3, **kargs):
 
   inputs = Input(input_shape)
