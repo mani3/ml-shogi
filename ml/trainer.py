@@ -121,7 +121,7 @@ class Trainer(object):
     return step
 
   def valid(self, loss_fn, valid_dataset, step, output_image=False):
-    x_valids = None
+    # x_valids = None
 
     start_time = time.time()
 
@@ -131,9 +131,9 @@ class Trainer(object):
         self.model, loss_fn, x_valid, y_valid)
       self.metrics.set_valid_accuracy(y_true, y_pred)
 
-      x_valids = np.array(x_valid.numpy()) if x_valids is None \
-          else np.concatenate((x_valids, x_valid.numpy()))
-      
+      # x_valids = np.array(x_valid.numpy()) if x_valids is None \
+      #     else np.concatenate((x_valids, x_valid.numpy()))
+
       # for i, y in enumerate(y_true):
       #   y_trues[i] = np.array(y.numpy()) if y_trues[i] is None \
       #       else np.concatenate((y_trues[i], y.numpy()))
@@ -141,7 +141,7 @@ class Trainer(object):
       #   y_preds[i] = np.array(y.numpy()) if y_preds[i] is None \
       #       else np.concatenate((y_preds[i], y.numpy()))
 
-    logger.info('validation size: {}'.format(len(x_valids)))
+    # logger.info('validation size: {}'.format(len(x_valids)))
     logger.info(f'validation: {time.time() - start_time:.4f} s')
 
     start_time = time.time()
@@ -149,7 +149,7 @@ class Trainer(object):
     val_accuracy = self.metrics.get_valid_accuracy()
     self.metrics.reset_valid()
     logger.info(f'save metrics: {time.time() - start_time:.4f} s')
-    
+
     # for c, v in zip([*self.labels, 'total'], recalls):
     #   logger.info('Recall(valid): {}={:.4f}'.format(c, v))
     # self.save_best_score(recalls[-1])
