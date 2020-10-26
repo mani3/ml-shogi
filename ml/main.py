@@ -84,14 +84,10 @@ def get_optimizer(name):
 def get_model(name):
   if name == 'cnn_simple192':
     return cnn.simple192
-  elif name == 'resnet_18':
-    return resnet.ResNet18
-  elif name == 'resnet_34':
-    return resnet.ResNet34
-  elif name == 'resnet_50':
-    return resnet.ResNet50
-  elif name == 'resnet_101':
-    return resnet.ResNet101
+  elif name == 'resnet_20':
+    return resnet.ResNet20
+  elif name == 'resnet_40':
+    return resnet.ResNet40
   else:
     raise ValueError('{} is not support model_name'.format(name))
 
