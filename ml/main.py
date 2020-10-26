@@ -7,7 +7,7 @@ from absl import flags
 
 import numpy as np
 import tensorflow as tf
-# import tensorflow_addons as tfa
+import tensorflow_addons as tfa
 
 from ml.loss import simple_loss
 from ml.model import (
@@ -55,6 +55,12 @@ flags.DEFINE_float('reduce_factor', np.sqrt(0.1), 'Reduce factor: 0.0 ~ 1.0')
 flags.DEFINE_float('reduce_min_lr', 1e-6, 'Reduce min lr')
 flags.DEFINE_boolean('exponential_decay', False, 'Enable exponential decay')
 
+# 3234977 / 256 = 12636
+flags.DEFINE_float('cyclical_step_size', 12636, 'Cyclical step size')
+flags.DEFINE_float('lr_init', 1e-4, 'CyclicalLearningRate parameters')
+flags.DEFINE_float('lr_max', 1e-2, 'CyclicalLearningRate parameters')
+flags.DEFINE_boolean('cyclical_learning_rate', False, 'Enable cyclical lr')
+
 
 def get_optimizer(name):
   if FLAGS.exponential_decay:
@@ -63,6 +69,12 @@ def get_optimizer(name):
       decay_steps=FLAGS.lr_decay_steps,
       decay_rate=FLAGS.lr_decay_rate,
       staircase=True)
+  elif FLAGS.cyclical_learning_rate:
+    lr = tfa.optimizers.CyclicalLearningRate(
+      initial_learning_rate=FLAGS.lr_init,
+      maximal_learning_rate=FLAGS.lr_max,
+      step_size=FLAGS.cyclical_step_size,
+      scale_fn=lambda x: 1.)
   else:
     lr = FLAGS.learning_rate
 
@@ -84,6 +96,10 @@ def get_optimizer(name):
 def get_model(name):
   if name == 'cnn_simple192':
     return cnn.simple192
+  elif name == 'resnet_5':
+    return resnet.ResNet5
+  elif name == 'resnet_10':
+    return resnet.ResNet10
   elif name == 'resnet_20':
     return resnet.ResNet20
   elif name == 'resnet_40':

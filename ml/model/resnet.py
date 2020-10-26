@@ -110,6 +110,13 @@ def resnet(input_shape, classes, resnet_size=18,
   return model
 
 
+ResNet5 = functools.partial(
+  resnet,
+  resnet_size=5,
+  num_filters=256,
+  kernel_size=3,
+  strides=1)
+
 ResNet10 = functools.partial(
   resnet,
   resnet_size=10,
