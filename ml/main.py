@@ -128,7 +128,10 @@ def run(logdir, model_name, opt_name, loss_name):
   optimizer = get_optimizer(opt_name)
   loss = get_loss(loss_name)
 
-  trainer = Trainer(model, logdir, optimizer, loss)
+  trainer = Trainer(model, logdir, optimizer, loss,
+                    factor=FLAGS.reduce_factor,
+                    patience=FLAGS.reduce_patience,
+                    min_lr=FLAGS.reduce_factor)
 
   with trainer.summary_writer.as_default():
     tf.summary.text('parameters', FLAGS.flags_into_string(), step=0)
