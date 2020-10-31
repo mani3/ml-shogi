@@ -37,14 +37,14 @@ def make_input_features(piece_bb, occupied, pieces_in_hand):
 
 def make_input_features_from_board(board):
   if board.turn == shogi.BLACK:
-    piece_bb = board.piece_bb
-    occupied = (
-      board.occupied[shogi.BLACK],
-      board.occupied[shogi.WHITE]
+    piece_bb = copy.deepcopy(board.piece_bb)
+    occupied = copy.deepcopy(
+      (board.occupied[shogi.BLACK],
+       board.occupied[shogi.WHITE])
     )
-    pieces_in_hand = (
-      board.pieces_in_hand[shogi.BLACK],
-      board.pieces_in_hand[shogi.WHITE]
+    pieces_in_hand = copy.deepcopy(
+      (board.pieces_in_hand[shogi.BLACK],
+       board.pieces_in_hand[shogi.WHITE])
     )
   else:
     piece_bb = [common.bb_rotate_180(bb) for bb in board.piece_bb]

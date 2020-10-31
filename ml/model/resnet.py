@@ -27,6 +27,8 @@ def activation(x, name: str, **kwargs):
     return mish(x)
   elif name == 'relu':
     return tf.nn.relu(x)
+  elif name == 'swish':
+    return tf.nn.swish(x)
   else:
     raise ValueError(f'Not found activation function name: {name}')
 
@@ -59,7 +61,7 @@ def residual_block(
     use_bias=True, data_format=data_format)(x)
 
   x = batch_norm(data_format)(x)
-  x = tf.keras.layers.add([x, shortcut])
+  x = tf.keras.layers.Add()([x, shortcut])
   x = activation(x, activation_name)
   return x
 
@@ -93,7 +95,7 @@ def resnet(input_shape, classes, resnet_size=18,
       x, filters=num_filters, kernel_size=kernel_size, strides=strides,
       activation_name=activation_name, data_format=data_format)
 
-  policy = Conv2D(classes, kernel_size=1, padding='same')(x)
+  policy = Conv2D(classes, kernel_size=3, padding='same')(x)
   policy = batch_norm(data_format)(policy)
   policy = activation(policy, activation_name)
   policy = Flatten(name='fc_policy')(policy)

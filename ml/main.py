@@ -96,6 +96,8 @@ def get_optimizer(name):
 def get_model(name):
   if name == 'cnn_simple192':
     return cnn.simple192
+  elif name == 'cnn_simple256':
+    return cnn.simple256
   elif name == 'resnet_5':
     return resnet.ResNet5
   elif name == 'resnet_10':
