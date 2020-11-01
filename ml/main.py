@@ -32,7 +32,7 @@ flags.DEFINE_string('loss_name', '', '')
 flags.DEFINE_string('optimizer_name', 'adam', 'rmsprop, adam')
 flags.DEFINE_string('saved_model_path', None, 'load weights path')
 
-flags.DEFINE_string('activation_name', 'leaky_relu', 'activation name')
+flags.DEFINE_string('activation_name', 'relu', 'activation name')
 
 flags.DEFINE_integer('image_size', 9, 'Image size')
 flags.DEFINE_integer('batch_size', 64, 'Batch size')
@@ -119,7 +119,9 @@ def run(logdir, model_name, opt_name, loss_name):
   logger.info(f'opt_name: {opt_name}')
 
   model = get_model(model_name)(
-    input_shape=(9, 9, 104), classes=MOVE_DIRECTION_LABEL_NUM)
+    input_shape=(9, 9, 104),
+    classes=MOVE_DIRECTION_LABEL_NUM,
+    activation_name=FLAGS.activation_name)
   logger.info(model.summary())
 
   if FLAGS.saved_model_path:
