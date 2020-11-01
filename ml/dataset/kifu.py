@@ -1,5 +1,6 @@
 import os
 import copy
+import uuid
 import pickle
 import hashlib
 
@@ -108,7 +109,7 @@ class Phase(object):
 
   def save(self, export_dir):
     hash = hashlib.sha256(self.feature).hexdigest()
-    key = hash + str(self.label) + str(self.win)
+    key = hash + str(self.label) + str(self.win) + str(uuid.uuid1())
     hash = hashlib.sha256(key.encode('utf8')).hexdigest()
     output_path = os.path.join(export_dir, f'{hash}.pickle')
 
