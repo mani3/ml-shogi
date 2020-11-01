@@ -28,7 +28,7 @@ class Metrics(object):
       self.metrics_accuracy_train.append(l)
 
       name = 'Accuracy/{}/valid'.format(t)
-      l = m.SparseCategoricalAccuracy(name, dtype=tf.float32)
+      l = m.BinaryCrossentropy(name, dtype=tf.float32)
       self.metrics_accuracy_valid.append(l)
 
   def set_train_loss(self, logs: list):
