@@ -39,6 +39,7 @@ class Metrics(object):
       m(l)
 
   def set_train_accuracy(self, y_true: list, y_pred: list):
+    y_pred = [tf.nn.softmax(y_pred[0]), tf.math.sigmoid(y_pred[1])]
     for m, t, p in zip(self.metrics_accuracy_train, y_true, y_pred):
       m(t, p)
 
@@ -59,6 +60,7 @@ class Metrics(object):
       m(l)
 
   def set_valid_accuracy(self, y_true: list, y_pred: list):
+    y_pred = [tf.nn.softmax(y_pred[0]), tf.math.sigmoid(y_pred[1])]
     for m, t, p in zip(self.metrics_accuracy_valid, y_true, y_pred):
       m(t, p)
 
