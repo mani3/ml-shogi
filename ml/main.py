@@ -13,6 +13,7 @@ from ml.loss import simple_loss
 from ml.model import (
   cnn,
   resnet,
+  mobilenet,
 )
 
 from ml.trainer import Trainer
@@ -106,6 +107,8 @@ def get_model(name):
     return resnet.ResNet20
   elif name == 'resnet_40':
     return resnet.ResNet40
+  elif name == 'mobilenetv3_large':
+    return mobilenet.MobileNetV3Large
   else:
     raise ValueError('{} is not support model_name'.format(name))
 
@@ -164,15 +167,3 @@ def main(args):
 
 if __name__ == "__main__":
   app.run(main)
-
-
-# kifu_list_train_path = 'kifulist_train_100.txt'
-# kifu_list_valid_path = 'kifulist_valid_100.txt'
-# csa = CSA(kifu_list_train_path, kifu_list_valid_path, 1)
-
-# for x, y1, y2 in csa.train_input_fn().take(1):
-#   print(f'feature: {x.shape}, {x.dtype}, label: {y1}, {y2}')
-
-# for x, y1, y2 in csa.valid_input_fn().take(1):
-#   print(f'feature: {x.shape}, {x.dtype}, label: {y1}, {y2}')
-
