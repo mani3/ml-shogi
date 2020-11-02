@@ -113,7 +113,7 @@ class Trainer(object):
         # 保存する処理はちょー重いのでまびく
         self.save_checkpoints(ckpt, manager, step)
         logger.info(f'save checkpoint: {time.time() - start_time:.4f} s')
-        
+
         # validation for each steps
         start_time = time.time()
         self.valid(loss_fn, valid_dataset, step)
