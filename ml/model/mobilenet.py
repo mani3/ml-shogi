@@ -107,8 +107,7 @@ class MobileNetV3:
 
 def mobilenetv3_large(input_shape, classes, filters=256, alpha=1.0, **kwargs):
   mobilenet = MobileNetV3(input_shape, classes, alpha=alpha)
-  e = kwargs.get('e', 256)
-  return mobilenet.large(filters, e, **kwargs)
+  return mobilenet.large(filters, **kwargs)
 
 
 MobileNetV3Large = functools.partial(mobilenetv3_large)
@@ -116,7 +115,7 @@ MobileNetV3Large = functools.partial(mobilenetv3_large)
 MobileNetV3_192 = functools.partial(
   mobilenetv3_large,
   filters=192,
-  e=384,
+  e=512,
 )
 
 MobileNetV3_256 = functools.partial(
