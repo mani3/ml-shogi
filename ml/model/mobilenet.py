@@ -67,6 +67,7 @@ class MobileNetV3:
 
     if r:
       x = Add()([x, inputs])
+      x = activation_fn(x)
 
     return x
 
@@ -111,3 +112,15 @@ def mobilenetv3_large(input_shape, classes, filters=256, alpha=1.0, **kwargs):
 
 
 MobileNetV3Large = functools.partial(mobilenetv3_large)
+
+MobileNetV3_192 = functools.partial(
+  mobilenetv3_large,
+  filters=192,
+  e=384,
+)
+
+MobileNetV3_256 = functools.partial(
+  mobilenetv3_large,
+  filters=256,
+  e=512,
+)

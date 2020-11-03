@@ -109,6 +109,10 @@ def get_model(name):
     return resnet.ResNet40
   elif name == 'mobilenetv3_large':
     return mobilenet.MobileNetV3Large
+  elif name == 'mobilenetv3_192':
+    return mobilenet.MobileNetV3_192
+  elif name == 'mobilenetv3_256':
+    return mobilenet.MobileNetV3_256
   else:
     raise ValueError('{} is not support model_name'.format(name))
 
