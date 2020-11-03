@@ -52,10 +52,14 @@ def simple(
   x = BatchNormalization(axis=bn_axis)(x)
   x = LeakyReLU(alpha=0.1)(x)
 
-  policy = Conv2D(classes, kernel_size=1, padding='same')(x)
+  policy = Conv2D(classes, kernel_size=3, padding='same')(x)
+  policy = BatchNormalization(axis=bn_axis)(policy)
+  policy = LeakyReLU(alpha=0.1)(policy)
   policy = Flatten()(policy)
 
-  values = Conv2D(classes, kernel_size=1, padding='same')(x)
+  values = Conv2D(classes, kernel_size=3, padding='same')(x)
+  values = BatchNormalization(axis=bn_axis)(values)
+  values = LeakyReLU(alpha=0.1)(values)
   values = Flatten()(values)
   values = Dense(256)(values)
   values = Dense(1)(values)
