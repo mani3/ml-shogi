@@ -4,13 +4,12 @@ import datetime
 
 import absl
 
-import sklearn
 import numpy as np
 import tensorflow as tf
 
 
 from ml.metrics import Metrics
-from ml.reducer import ReduceLearningRate
+from ml.layer.reducer import ReduceLearningRate
 
 from ml.dataset.common import MOVE_DIRECTION_LABEL_NUM
 
@@ -106,6 +105,7 @@ class Trainer(object):
       self.metrics.set_train_accuracy(y_true, y_pred)
       self.metrics.write_train(step)
       self.metrics.reset_train()
+      break
 
       if step % self.logging_steps == 0:
         start_time = time.time()
@@ -168,6 +168,14 @@ class Trainer(object):
     # TODO: どうも callback.on_epoch_end を読んでしまうと保存はできるが、
     # load_modelできないのであとで考える
     self.model.save(path, save_format='tf', include_optimizer=False)
+
+    time.sleep(2)  # ファイルが書き出されるのを待つ
+
+    # export tflite
+    converter = tf.lite.TFLiteConverter.from_saved_model(path)
+    tflite_model = converter.convert()
+    output_path = os.path.join(path, f"{dirname}.tflite")
+    open(output_path, "wb").write(tflite_model)
 
   def save_best_score(self, score):
     if score > self.best_threshold:
