@@ -156,3 +156,4 @@ geckodriver.log
 .vscode/
 logs/*
 dataset/*
+*.ipynb
