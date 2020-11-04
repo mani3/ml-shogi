@@ -105,7 +105,6 @@ class Trainer(object):
       self.metrics.set_train_accuracy(y_true, y_pred)
       self.metrics.write_train(step)
       self.metrics.reset_train()
-      break
 
       if step % self.logging_steps == 0:
         start_time = time.time()
