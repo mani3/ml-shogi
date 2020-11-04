@@ -115,7 +115,7 @@ MobileNetV3Large = functools.partial(mobilenetv3_large)
 MobileNetV3_192 = functools.partial(
   mobilenetv3_large,
   filters=192,
-  e=512,
+  e=384,
 )
 
 MobileNetV3_256 = functools.partial(
