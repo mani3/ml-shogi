@@ -37,15 +37,21 @@ class SFEN(object):
       count = len(f.readlines())
       return count
 
-  def make_inputs(self, sfen):
-    sfen = sfen.numpy().decode('utf-8')
-    return make_inputs(sfen)
+  def make_inputs(self, sfen_list):
+    inputs = None
 
-  def preprocess(self, sfen, win, label):
-    x = tf.py_function(self.make_inputs, [sfen], [tf.float32])
-    x = tf.reshape(x, [43, 9, 9])
-    x = tf.transpose(x, perm=[1, 2, 0])
-    return x, label, win
+    for sfen in sfen_list:
+      sfen = sfen.numpy().decode('utf-8')
+      x = make_inputs(sfen)
+      x = x.transpose([1, 2, 0])
+      x = np.expand_dims(x, axis=0)
+      inputs = x if inputs is None else np.concatenate([inputs, x])
+    return inputs
+
+  def preprocess(self, sfens, wins, labels):
+    x = tf.py_function(self.make_inputs, [sfens], [tf.float32])
+    x = tf.reshape(x, [-1, 9, 9, 43])
+    return x, labels, wins
 
   def train_input_fn(self):
     batch_size = self.batch_size
@@ -56,9 +62,9 @@ class SFEN(object):
       (df['sfen'], df['win'], df['label']))
 
     dataset = (dataset.shuffle(10000, seed=self.seed)
+               .batch(batch_size)
                .map(self.preprocess, num_parallel_calls=num_parallel)
                .repeat(self.epochs)
-               .batch(batch_size)
                .prefetch(tf.data.experimental.AUTOTUNE))
     return dataset
 
@@ -71,8 +77,8 @@ class SFEN(object):
       (df['sfen'], df['win'], df['label']))
 
     dataset = (dataset.repeat(1)
-               .map(self.preprocess, num_parallel_calls=num_parallel)
                .batch(batch_size)
+               .map(self.preprocess, num_parallel_calls=num_parallel)
                .prefetch(tf.data.experimental.AUTOTUNE))
     return dataset
 
