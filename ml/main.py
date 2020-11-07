@@ -17,15 +17,15 @@ from ml.model import (
 )
 
 from ml.trainer import Trainer
-from ml.dataset.csa_tfrecord import CSATFRecord
+from ml.dataset.sfen import SFEN
 from ml.dataset.common import MOVE_DIRECTION_LABEL_NUM
 
 
 logger = absl.logging
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('train_tfrecord', './dataset/tfrecords/train.tfrecord', 'Train tfrecord')
-flags.DEFINE_string('valid_tfrecord', './dataset/tfrecords/valid.tfrecord', 'Valid tfrecord')
+flags.DEFINE_string('train_csv', './dataset/csv/train.csv', '')
+flags.DEFINE_string('valid_csv', './dataset/csv/valid.csv', '')
 flags.DEFINE_string('logdir', None, 'Log directory')
 
 flags.DEFINE_string('model_name', 'cnn_simple192', 'cnn')
@@ -126,7 +126,7 @@ def run(logdir, model_name, opt_name, loss_name):
   logger.info(f'opt_name: {opt_name}')
 
   model = get_model(model_name)(
-    input_shape=(9, 9, 104),
+    input_shape=(9, 9, 43),
     classes=MOVE_DIRECTION_LABEL_NUM,
     activation_name=FLAGS.activation_name)
   logger.info(model.summary())
@@ -145,8 +145,8 @@ def run(logdir, model_name, opt_name, loss_name):
   with trainer.summary_writer.as_default():
     tf.summary.text('parameters', FLAGS.flags_into_string(), step=0)
 
-  dataset = CSATFRecord(
-    FLAGS.train_tfrecord, FLAGS.valid_tfrecord, FLAGS.epochs, FLAGS.batch_size)
+  dataset = SFEN(FLAGS.train_csv, FLAGS.valid_csv,
+                 FLAGS.epochs, FLAGS.batch_size)
 
   # 3143460
   if FLAGS.logging_steps:
