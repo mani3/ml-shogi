@@ -157,3 +157,6 @@ geckodriver.log
 logs/*
 dataset/*
 *.ipynb
+libs/*
+bin/*
+
