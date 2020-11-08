@@ -1,6 +1,8 @@
-FROM tensorflow/tensorflow:latest-gpu
+FROM tensorflow/tensorflow:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+build-essential \
+libssl-dev \
 libsm6 \
 libxext6 \
 libxrender-dev \
@@ -10,6 +12,13 @@ git \
 openssl
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN curl -OL https://github.com/Kitware/CMake/releases/download/v3.18.4/cmake-3.18.4.tar.gz && \
+tar -zxvf cmake-3.18.4.tar.gz && \
+cd cmake-3.18.4 && \
+./bootstrap && \
+make && \
+make install
 
 RUN /usr/local/bin/pip install -U pip
 RUN /usr/local/bin/pip --no-cache-dir install \
@@ -40,9 +49,3 @@ tensorflow-datasets
 RUN /usr/local/bin/pip --no-cache-dir install \
 kaggle \
 opencv-python
-
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash
-RUN apt-get install -y nodejs
-RUN jupyter labextension install jupyterlab_tensorboard
-
-
