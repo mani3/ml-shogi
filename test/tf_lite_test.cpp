@@ -36,6 +36,8 @@ int main(int argc, char **argv) {
   float* input = interpreter->typed_input_tensor<float>(index);
   *input = 1.0f;
 
+  std::cout << "Input size: " << interpreter->inputs().size()  << std::endl;
+
   if (interpreter->Invoke() != kTfLiteOk) {
     std::cout << "Failed to invoke!: " << model_path << std::endl; 
   }
