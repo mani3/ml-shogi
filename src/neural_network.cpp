@@ -9,7 +9,7 @@ NeuralNetwork::NeuralNetwork(std::string model_path, unsigned int batch_size)
   tensorflow::SessionOptions session_options = tensorflow::SessionOptions();
   tensorflow::RunOptions run_options = tensorflow::RunOptions();
   tensorflow::Status status = tensorflow::LoadSavedModel(
-    session_options, run_options, model_path, {tensorflow::kSavedModelTagServe}, &*bundle);
+    session_options, run_options, model_path, {tensorflow::kSavedModelTagServe}, &bundle);
   TF_CHECK_OK(status);
 
   this->loop = std::unique_ptr<std::thread>(new std::thread(NeuralNetwork::RunLoop, this));
@@ -61,7 +61,7 @@ void NeuralNetwork::Infer() {
   tensorflow::Tensor inputs = MakeTensor(states);
   std::vector<tensorflow::Tensor> outputs;
 
-  tensorflow::Status status = bundle->GetSession()->Run({{"serving_default_input_1:0", inputs}}, output_layer, {}, &outputs);
+  tensorflow::Status status = bundle.GetSession()->Run({{"serving_default_input_1:0", inputs}}, output_layer, {}, &outputs);
   TF_CHECK_OK(status);
 
   auto policy = outputs[0].flat<float>();

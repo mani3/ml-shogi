@@ -57,7 +57,7 @@ class NeuralNetwork {
   std::mutex lock;
   std::condition_variable cv;
 
-  std::unique_ptr<tensorflow::SavedModelBundleLite> bundle;
+  tensorflow::SavedModelBundleLite bundle;
 
   unsigned int batch_size;
 

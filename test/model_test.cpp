@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-// #include "neural_network.h"
+#include "neural_network.h"
 
 #include <common.hpp>
 #include <bitboard.hpp>
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   }
 
   std::string model_path = argv[1];
-  // NeuralNetwork model(model_path, 1);
+  NeuralNetwork model(model_path, 1);
 
   initTable();
   Position::initZobrist();
@@ -40,14 +40,14 @@ int main(int argc, char **argv) {
 
   Position position(DefaultStartPositionSFEN, th.get(), s->thisptr);
 
-  // auto res = model.Commit(&position).get();
+  auto res = model.Commit(&position).get();
 
-  // auto p = res[0];
-  // auto v = res[1];
+  auto p = res[0];
+  auto v = res[1];
 
-  // std::for_each(p.begin(), p.end(), [](float x) { std::cout << x << ","; });
-  // std::cout << std::endl;
-  // std::for_each(v.begin(), v.end(), [](float x) { std::cout << x << ","; });
-  // std::cout << std::endl;
+  std::for_each(p.begin(), p.end(), [](float x) { std::cout << x << ","; });
+  std::cout << std::endl;
+  std::for_each(v.begin(), v.end(), [](float x) { std::cout << x << ","; });
+  std::cout << std::endl;
   return 0;
 }
